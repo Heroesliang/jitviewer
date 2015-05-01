@@ -37,8 +37,13 @@
   <div>
   <div id="loops">
     <ul>
-      {% for item in loops %}
-      <li class="loopitem" id="{{item.descr}}" name="{{item.repr()}}"><span><a href="#" data-name="{{ item.descr }}">{{item.repr()}}</a> run {{item.count}} times</span></li>
+      {% for item in loops recursive %}
+      <li class="loopitem" id="{{item.descr}}" name="{{item.repr()}}"><span><a href="#" data-name="{{ item.descr }}">{{item.comment}}</a> run {{item.count}} times</span></li>
+      {%- if item.bridges -%}
+      <ul>
+	      {{ loop(item.bridges) }}
+      </ul>
+      {%- endif %}
       {% endfor %}
     </ul>
     {% if extra_data %}

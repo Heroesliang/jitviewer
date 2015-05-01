@@ -86,6 +86,62 @@ def create_loop_dict(loops):
         d[mangle_descr(loop.descr)] = loop
     return d
 
+CACHE = {}
+
+MAX_DEPTH=999
+def find_bridges(storage, all_loops, loop, depth, seen):
+    bridges = []
+
+    if depth == MAX_DEPTH:
+        print("max depth reached in %s" % loop.comment)
+        return []
+
+    for op in loop.operations:
+        if not op.is_guard():
+            continue
+        #looking_for = "# bridge out of Guard %s" % hex(op.guard_no)
+        #for l in all_loops:
+        #    if l.comment.startswith(looking_for):
+        #        bridges.append(make_func_entry(l, storage))
+        #if op.bridge is not None:
+        #    bridges.append(make_func_entry(l, storage))
+
+        descr = mangle_descr(op.descr)
+        subloop = storage.loop_dict.get(descr, None)
+        if subloop is not None:
+            func = make_func_entry(subloop, storage, depth, seen)
+            if func is not None:
+                bridges.append(func)
+
+    return bridges
+
+def make_func_entry(loop, storage, depth=0, seen=None):
+    if seen is None:
+        seen = set()
+    if loop in seen:
+        print("seen you!")
+        return None
+    else:
+        seen |= set([loop])
+    func = CACHE.get(loop, None)
+    if func is not None:
+        return func
+    try:
+        start, stop = loop.comment.find('('), loop.comment.rfind(')')
+        name = loop.comment[start + 1:stop]
+        func = FunctionHtml.from_operations(loop.operations, storage,
+                                            limit=1,
+                                            inputargs=loop.inputargs,
+                                            loopname=name)
+    except CannotFindFile:
+        func = DummyFunc()
+    func.count = getattr(loop, 'count', '?')
+    func.descr = mangle_descr(loop.descr)
+    func.comment = loop.comment
+    func.bridges = find_bridges(storage, storage.loops, loop, depth+1, seen) # XXX
+    CACHE[loop] = func
+    return func
+
 class Server(object):
     def __init__(self, filename, storage):
         self.filename = filename
@@ -95,17 +151,22 @@ class Server(object):
         all = flask.request.args.get('all', None)
         loops = []
         for index, loop in enumerate(self.storage.loops):
-            try:
-                start, stop = loop.comment.find('('), loop.comment.rfind(')')
-                name = loop.comment[start + 1:stop]
-                func = FunctionHtml.from_operations(loop.operations, self.storage,
-                                                    limit=1,
-                                                    inputargs=loop.inputargs,
-                                                    loopname=name)
-            except CannotFindFile:
-                func = DummyFunc()
-            func.count = getattr(loop, 'count', '?')
-            func.descr = mangle_descr(loop.descr)
+            if loop.comment.startswith("# bridge"):
+                continue # these appear nested under the original loop
+            #try:
+            #    start, stop = loop.comment.find('('), loop.comment.rfind(')')
+            #    name = loop.comment[start + 1:stop]
+            #    func = FunctionHtml.from_operations(loop.operations, self.storage,
+            #                                        limit=1,
+            #                                        inputargs=loop.inputargs,
+            #                                        loopname=name)
+            #except CannotFindFile:
+            #    func = DummyFunc()
+            #func.count = getattr(loop, 'count', '?')
+            #func.descr = mangle_descr(loop.descr)
+            #func.comment = loop.comment
+            #func.bridges = find_bridges(self.storage.loops, loop)
+            func = make_func_entry(loop, self.storage)
             loops.append(func)
         loops.sort(lambda a, b: cmp(b.count, a.count))
         if len(loops) > CUTOFF:
