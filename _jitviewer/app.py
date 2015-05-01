@@ -91,6 +91,26 @@ class Server(object):
         self.filename = filename
         self.storage = storage
 
+    def count_artefacts(self, loop):
+        calls = news = 0
+        for op in loop.operations:
+            if "call" in op.name:
+                calls += 1
+            if op.name.startswith("new"):
+                news += 1
+        return calls, news
+
+    def parse_repr(self, r):
+        elems = r.split(",")
+        title = elems[0]
+        if len(elems) == 1:
+            filenm = None
+            line = None
+        else:
+            filenm = elems[1]
+            line = elems[2]
+        return title, filenm, line
+
     def index(self):
         all = flask.request.args.get('all', None)
         loops = []
@@ -106,6 +126,11 @@ class Server(object):
                 func = DummyFunc()
             func.count = getattr(loop, 'count', '?')
             func.descr = mangle_descr(loop.descr)
+            func.n_ops = len(loop.operations)
+
+            func.n_calls, func.n_news = self.count_artefacts(loop)
+            func.title, func.filenm, func.line = self.parse_repr(func.repr())
+
             loops.append(func)
         loops.sort(lambda a, b: cmp(b.count, a.count))
         if len(loops) > CUTOFF:

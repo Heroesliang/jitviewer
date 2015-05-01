@@ -19,6 +19,7 @@
   </script>
 </head>
 <body>
+  <h1>JIT Viewer</h1>
   <header>
     <div class="menu">Menu</div>
     <a id="asmtoggler" href="#">Show assembler [a]</a><br>
@@ -26,7 +27,6 @@
     <div id="callstack">
     </div>
   </header>
-  <h1>JIT Viewer</h1>
   <!--
   <div id="title">
     <span id="title-text">JIT viewer</span>
@@ -36,11 +36,23 @@
       Filter [/]: <input id="inp-bar" type="text" size="80"></input>
   <div>
   <div id="loops">
-    <ul>
+    <table>
+	    <tr style="background-color: #cccccc;"><th>Loop</th><th>execs</th><th>ops</th><th>news</th><th>calls</th></tr>
       {% for item in loops %}
-      <li class="loopitem" id="{{item.descr}}" name="{{item.repr()}}"><span><a href="#" data-name="{{ item.descr }}">{{item.repr()}}</a> run {{item.count}} times</span></li>
+      <tr class="loopitem" id="{{item.descr}}" name="{{item.repr()}}">
+	      <!--<li class="loopitem" id="{{item.descr}}" name="{{item.repr()}}"><span><a href="#" data-name="{{ item.descr }}">{{item.repr()}}</a> run {{item.count}} times</span></li>-->
+	      <td>
+		      <i><a href="#" data-name="{{ item.descr }}">{{item.title}}</a></i>
+		  {% if item.filenm %}
+		  <br />&nbsp;&nbsp;&nbsp;&nbsp;{{item.filenm}}
+		  {% endif %}
+		  {% if item.line %}
+		  <br />&nbsp;&nbsp;&nbsp;&nbsp;{{item.line}}
+		  {% endif %}
+	      </td><td class="count">{{item.count}}</td><td class="count">{{item.n_ops}}</td><td class="count">{{item.n_news}}</td><td class="count">{{item.n_calls}}</td>
+      </tr>
       {% endfor %}
-    </ul>
+    </table>
     {% if extra_data %}
       <a href="/?all=true">{{extra_data}}</a>
     {% endif %}

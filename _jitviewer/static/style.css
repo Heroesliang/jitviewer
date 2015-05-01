@@ -1,5 +1,6 @@
 /*HTML5 Reset*/
-a,abbr,address,article,aside,audio,b,blockquote,body,canvas,caption,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,p,pre,q,samp,section,small,span,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,ul,var,video{ margin:0; padding:0; border:0; font-size:100%; font-weight:inherit; font-style:inherit; vertical-align:baseline}article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary{ display:block}a,ins,del{ text-decoration:none}ul,ol{ list-style:none}table{ border-spacing:0; border-collapse:collapse}caption,th{ text-align:left}q:after,q:before{ content:”“}
+/*a,abbr,address,article,aside,audio,b,blockquote,body,canvas,caption,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,p,pre,q,samp,section,small,span,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,ul,var,video{ margin:0; padding:0; border:0; font-size:100%; font-weight:inherit; font-style:inherit; vertical-align:baseline}article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary{ display:block}a,ins,del{ text-decoration:none}ul,ol{ list-style:none}table{ border-spacing:0; border-collapse:collapse}caption,th{ text-align:left}q:after,q:before{ content:”“}
+ * */
 /*End of HTML5 Reset*/
 
 /* General Layout & Typography 
@@ -69,14 +70,14 @@ a:hover {
 #main {
 	display: block;
     float: left;
-    width: 90%;
+    width: 97%;
     margin-left: 30px;
 }
 header {
 	display: block;
-	width: 360px;
+	/*width: 95%; */
 	
-	position: fixed;
+	/*position: fixed; */
 	top: 10px;
 	right: 10px;
 	
@@ -137,9 +138,10 @@ header,
 		-moz-box-shadow: 0px 0px 7px #cacaca;
 		-webkit-box-shadow: 0px 0px 7px #cacaca;
 		box-shadow: 0px 0px 7px #cacaca;
-    margin-left: 100px;
+    /*margin-left: 100px;
     padding-bottom: 5px;
     padding-top: 5px;
+    */
 }
 
 .single-operation {
@@ -247,6 +249,24 @@ h1 {
     padding: 10px 10px 10px 10px;
     background: #ffcc66;
     font-size: 25px;
+}
+
+th {
+    text-align: left;
+    background-color: #cccccc;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+table {
+	font-size: small;
+	border-spacing: 3px;
+}
+
+.count {
+	text-align: right;
 }
 
 /* End of Formatting 
