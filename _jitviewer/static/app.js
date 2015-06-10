@@ -74,9 +74,18 @@ JITViewer = can.Control({
     },
     "#inp-bar keyup": function(el, ev){
         var v = el.val();
+        var number = 0;
+        if (v.indexOf("0x") === 0) {
+          // search for the start offset vmprof address
+          var number = parseInt(v.substring(2), 16);
+        }
         $(".loopitem").each(function (i, l) {
             var name = $(l).attr('name');
-            if(name.search(v) != -1){
+            var show = name.search(v) != -1;
+            if (number !== 0) {
+              show = parseInt($(l).data('start-ofs')) === number;
+            }
+            if(show){
                 $(l).show();
             } else {
                 $(l).hide();

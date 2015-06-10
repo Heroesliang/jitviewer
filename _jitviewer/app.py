@@ -102,8 +102,10 @@ class Server(object):
                                                     limit=1,
                                                     inputargs=loop.inputargs,
                                                     loopname=name)
+                func.start_ofs = loop.start_ofs
             except CannotFindFile:
                 func = DummyFunc()
+                func.start_ofs = -1
             func.count = getattr(loop, 'count', '?')
             func.descr = mangle_descr(loop.descr)
             loops.append(func)
@@ -177,7 +179,11 @@ class Server(object):
                 source = CodeRepr(source, code, loop)
             except (IOError, OSError):
                 source = CodeReprNoFile(loop)
+        loop_addr = None
+        if hasattr(orig_loop, 'start_ofs'):
+            loop_addr = hex(orig_loop.start_ofs)[:-1]
         d = {'html': flask.render_template('loop.html',
+                                           loop_addr=loop_addr,
                                            source=source,
                                            current_loop=name,
                                            upper_path=up,

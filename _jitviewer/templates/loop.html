@@ -7,6 +7,9 @@
        <div id="line-{{loop.index + source.firstlineno - 1}}" class="source visible">{{sourceline.line}}</div>
        {% if sourceline.chunks %}
           <div class="operations">
+              {% if loop_addr %}
+              <div class="vmprof-address"> vmprof-address {{ loop_addr }}</div>
+              {% endif %}
               {% for chunk in sourceline.chunks %}
                  {% if chunk.is_bytecode %}
                    <span class="{{chunk.cssclass}}"><span class="bytecodepos">{{chunk.bytecode_no}} </span>{{chunk.html_repr()}}</span><br/>

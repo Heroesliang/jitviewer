@@ -249,5 +249,12 @@ h1 {
     font-size: 25px;
 }
 
+.vmprof-address {
+    float: right;
+    font-size: 12px;
+    font-weight: bold;
+    padding-right: 10px;
+}
+
 /* End of Formatting 
 -----------------------------------------*/

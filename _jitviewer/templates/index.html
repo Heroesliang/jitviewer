@@ -38,7 +38,9 @@
   <div id="loops">
     <ul>
       {% for item in loops %}
-      <li class="loopitem" id="{{item.descr}}" name="{{item.repr()}}"><span><a href="#" data-name="{{ item.descr }}">{{item.repr()}}</a> run {{item.count}} times</span></li>
+      <li class="loopitem" id="{{item.descr}}" name="{{item.repr()}}" data-start-ofs="{{item.start_ofs}}">
+        <span><a href="#" data-name="{{ item.descr }}">{{item.repr()}}</a> run {{item.count}} times</span>
+      </li>
       {% endfor %}
     </ul>
     {% if extra_data %}
