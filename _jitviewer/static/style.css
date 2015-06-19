@@ -256,5 +256,35 @@ h1 {
     padding-right: 10px;
 }
 
+.liveranges {
+    margin-left: 2px;
+    display: table-cell;
+}
+
+.liverange {
+    display: inline-block;
+    margin-right: 0px;
+    height: 100%;
+    width: 4px;
+    background-color: green;
+}
+
+.operation {
+    display: table;
+    margin: 0;
+    padding: 0;
+}
+
+.operation-row {
+    display: table-row;
+    margin: 0;
+    padding: 0;
+}
+
+.code {
+    display: table-cell;
+    text-align: top;
+}
+
 /* End of Formatting 
 -----------------------------------------*/

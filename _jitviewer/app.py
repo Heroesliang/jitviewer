@@ -27,6 +27,7 @@ listens on http://localhost:5000
 import sys
 import os.path
 import argparse
+from functools import partial
 
 try:
     import rpython
@@ -58,7 +59,7 @@ except ImportError:
     from pypy.tool.jitlogparser.parser import adjust_bridges, import_log,\
          parse_log_counts
 #
-from _jitviewer.parser import ParserWithHtmlRepr, FunctionHtml
+from _jitviewer.parser import Parser, FunctionHtml
 from _jitviewer.display import CodeRepr, CodeReprNoFile
 import _jitviewer
 
@@ -102,7 +103,10 @@ class Server(object):
                                                     limit=1,
                                                     inputargs=loop.inputargs,
                                                     loopname=name)
-                func.start_ofs = loop.start_ofs
+                if hasattr(loop, 'start_ofs'):
+                    func.start_ofs = loop.start_ofs
+                else:
+                    func.start_ofs = -1
             except CannotFindFile:
                 func = DummyFunc()
                 func.start_ofs = -1
@@ -180,9 +184,14 @@ class Server(object):
             except (IOError, OSError):
                 source = CodeReprNoFile(loop)
         loop_addr = None
+        live_ranges = None
         if hasattr(orig_loop, 'start_ofs'):
             loop_addr = hex(orig_loop.start_ofs)[:-1]
+        if hasattr(orig_loop, 'live_ranges'):
+            live_ranges = orig_loop.live_ranges
         d = {'html': flask.render_template('loop.html',
+                                           loop=orig_loop,
+                                           live_ranges=live_ranges,
                                            loop_addr=loop_addr,
                                            source=source,
                                            current_loop=name,
@@ -263,7 +272,7 @@ def main(argv, run_app=True):
 
     storage = LoopStorage(extra_path)
 
-    log, loops = import_log(filename, ParserWithHtmlRepr)
+    log, loops = import_log(filename, Parser)
     parse_log_counts(extract_category(log, 'jit-backend-count'), loops)
     storage.loops = [loop for loop in loops
                      if not loop.descr.startswith('bridge')]

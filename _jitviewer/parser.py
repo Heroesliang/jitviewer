@@ -137,8 +137,24 @@ class OpHtml(parser.Op):
     #def repr_call_assembler(self):
     #    xxxx
 
+
 class ParserWithHtmlRepr(parser.SimpleParser):
     Op = OpHtml
+
+try:
+    from rpython.jit.backend.tool.regalloc import RegallocParser, LoopLiveRanges
+    class Parser(ParserWithHtmlRepr):
+
+        def parse(self):
+            loop = ParserWithHtmlRepr.parse(self) 
+            regalloc_parser = RegallocParser(self.input)
+            regloop = regalloc_parser.parse()
+            llr = LoopLiveRanges(regloop.inputargs, regloop.operations)
+            loop.live_ranges = llr
+            return loop
+
+except ImportError:
+    Parser = ParserWithHtmlRepr
 
 
 class TraceForOpcodeHtml(parser.TraceForOpcode):
